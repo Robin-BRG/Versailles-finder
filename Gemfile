@@ -15,7 +15,7 @@ gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
+gem "importmap-rails", "~> 1.2.3"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -50,11 +50,16 @@ gem "autoprefixer-rails"
 gem "font-awesome-sass", "~> 6.1"
 gem "simple_form", github: "heartcombo/simple_form"
 gem "sassc-rails"
+gem "faker"
+gem "geocoder"
 
 group :development, :test do
   gem "dotenv-rails"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
+  gem "debug", "~> 1.9.2"
+  gem "irb", "~> 1.13.2"
+  gem "rdoc", "~> 6.7.0"
+  gem "psych", "~> 5.1.0"  # Specify a compatible version of psych
 end
 
 group :development do
