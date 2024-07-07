@@ -12,26 +12,45 @@ export default class extends Controller {
 
     this.map = new mapboxgl.Map({
       container: this.element,
-      style: "mapbox://styles/mapbox/streets-v10"
+      style: "mapbox://styles/mapbox/standard",
+      center: [-24, 42], // Coordonnées initiales (seront mises à jour)
+      zoom: 1 // Zoom initial
     })
 
-    this.#addMarkersToMap()
-    this.#fitMapToMarkers()
+    this.#addGeolocateControl()
+    this.#centerMapOnUserLocation()
   }
 
-  #addMarkersToMap() {
-    this.markersValue.forEach((marker) => {
-      const popup = new mapboxgl.Popup().setHTML(marker.info_window_html)
-      new mapboxgl.Marker()
-        .setLngLat([ marker.lng, marker.lat ])
-        .setPopup(popup) // Ajoute la fenêtre d'information au marqueur
-        .addTo(this.map)
+
+  #addGeolocateControl() {
+    const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserHeading: true,
     })
+
+    this.map.addControl(geolocate)
+
+    this.map.on('load', () => {
+      geolocate.trigger() // Active automatiquement la géolocalisation
+    })
+
+
   }
 
-  #fitMapToMarkers() {
-    const bounds = new mapboxgl.LngLatBounds()
-    this.markersValue.forEach(marker => bounds.extend([ marker.lng, marker.lat ]))
-    this.map.fitBounds(bounds, { padding: 70, maxZoom: 15, duration: 0 })
+  #centerMapOnUserLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords
+        this.map.setCenter([longitude, latitude])
+        // this.map.setZoom(30) // Vous pouvez ajuster le niveau de zoom selon vos besoins
+      }, (error) => {
+        console.error("Error getting user location:", error)
+      })
+    } else {
+      console.error("Geolocation is not supported by this browser.")
+    }
   }
 }
